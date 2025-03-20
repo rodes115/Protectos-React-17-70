@@ -13,8 +13,8 @@ export default function CriptoSearchForm() {
         currency : '',
         criptocurrency : ''
     })
-
     const [error, setError] = useState('')
+
 
     const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
         setPair({
@@ -34,6 +34,9 @@ export default function CriptoSearchForm() {
             //Consultar Api
 
             fetchData(pair)
+
+            
+
         
     }
 
