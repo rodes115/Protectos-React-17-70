@@ -10,6 +10,10 @@ export default function DrinkCard({ drink }: DrinkCardProps) {
 
   const selectRecipe = useAppStore((state) => state.selectRecipe)
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+  }
+  
 
 
   return (
