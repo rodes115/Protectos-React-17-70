@@ -1,50 +1,73 @@
 import { Router } from "express"
-import { body } from "express-validator"
-import { createProduct } from "./handlers/products"
+import { body, param } from "express-validator"
+import { createProduct, getProducts, getProductById, updateProduct, updateAvailability, deleteProduct } from "./handlers/products"
+import { handleInputErrors } from "./middleware"
 
 const router = Router()
 
 //Routing  lo que envio -- lo que recibo
-router.get('/', (req, res) => {
+router.get('/', getProducts)
+router.get('/:id',
 
-    //res.send('Hola desde el servidor')
-    res.json('utilizar GET')
-})
+    param('id')
+        .isInt()
+        .withMessage('El id no es valido'),
+    handleInputErrors,
+    getProductById
+)
 
 router.post('/',
-    
-     //validar datos
-     body('name')
-     .notEmpty()
-     .withMessage('Nombre del producto no puede ir vacio'),
-     
- 
-     body('price')
-     .isNumeric().withMessage('Valor no válido')
-     .notEmpty().withMessage('El Precio del producto no puede ir vacio')
-     .custom((value)=> value > 0).withMessage('El Precio del producto no puede ser menor a 0'),
-     
+
+    //validar datos
+    body('name')
+        .notEmpty()
+        .withMessage('Nombre del producto no puede ir vacio'),
+
+
+    body('price')
+        .isNumeric().withMessage('Valor no válido')
+        .notEmpty().withMessage('El Precio del producto no puede ir vacio')
+        .custom((value) => value > 0).withMessage('El Precio del producto no puede ser menor a 0'),
+    handleInputErrors,
     createProduct
 
 )
 
-router.put('/', (req, res) => {
+router.put('/:id',
+    
+    //validar datos
+    body('name')
+        .notEmpty()
+        .withMessage('Nombre del producto no puede ir vacio'),
 
-    //res.send('Hola desde el servidor')
-    res.json('utilizar PUT')
-})
 
-router.patch('/', (req, res) => {
+    body('price')
+        .isNumeric().withMessage('Valor no válido')
+        .notEmpty().withMessage('El Precio del producto no puede ir vacio')
+        .custom((value) => value > 0).withMessage('El Precio del producto no puede ser menor a 0'),
+    body('availability')
+        .isBoolean()
+        .withMessage('El valor de disponibilidad no es válido'),
+        handleInputErrors,
+        updateProduct
+)
 
-    //res.send('Hola desde el servidor')
-    res.json('utilizar PATCH')
-})
+router.patch('/:id',
 
-router.delete('/', (req, res) => {
+    param('id')
+        .isInt()
+        .withMessage('El id no es valido'),
+    handleInputErrors,
+    updateAvailability
+)
 
-    //res.send('Hola desde el servidor')
-    res.json('utilizar delete')
-})
+router.delete('/:id', 
+param('id')
+.isInt()
+.withMessage('El id no es valido'),
+handleInputErrors,
+deleteProduct
+)
 
 
 export default router
