@@ -1,6 +1,7 @@
-import { safeParse } from "valibot"
+import { safeParse, number, parse, string, transform, pipe } from "valibot"
 import axios from 'axios'
-import { DraftProductSchema, ProductsSchema, Product, ProductSchema} from "../types"
+import { DraftProductSchema, ProductsSchema, Product, ProductSchema } from "../types"
+import { trueBoolean } from "../utils"
 
 type ProductData = {
     [k: string]: FormDataEntryValue
@@ -36,15 +37,15 @@ export async function addProduct(data: ProductData) {
 }
 
 export async function getProducts() {
-    
+
     try {
         const url = `${import.meta.env.VITE_API_URL}/api/products`
         const { data } = await axios.get(url)
         const result = safeParse(ProductsSchema, data.data)
         console.log(data)
-        if(result.success){
+        if (result.success) {
             return result.output
-        }else{
+        } else {
             throw new Error('Hubo un error ...')
         }
     } catch (error) {
@@ -54,18 +55,40 @@ export async function getProducts() {
 }
 
 export async function getProductById(id: Product['id']) {
-    
+
     try {
         const url = `${import.meta.env.VITE_API_URL}/api/products/${id}`
         const { data } = await axios.get(url)
         const result = safeParse(ProductSchema, data.data)
-        if(result.success){
+        if (result.success) {
             return result.output
-        }else{
+        } else {
             throw new Error('Hubo un error ...')
         }
     } catch (error) {
         console.log(error)
     }
 
+}
+
+export async function updateProduct(data: ProductData, id: Product['id']) {
+    try {
+
+        const NumberSchema = pipe(string(), transform(Number), number())
+
+        const result = safeParse(ProductSchema, {
+            id,
+            name: data.name,
+            price: parse(NumberSchema, data.price),
+            availability: trueBoolean(data.availability.toString())
+        })
+
+        if (result.success) {
+            const url = `${import.meta.env.VITE_API_URL}/api/products/${id}`
+            await axios.put(url, result.output)
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
 }
