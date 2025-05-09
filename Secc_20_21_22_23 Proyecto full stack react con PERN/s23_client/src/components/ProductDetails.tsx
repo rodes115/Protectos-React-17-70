@@ -1,10 +1,16 @@
-import {Link, useNavigate} from 'react-router-dom'
+import { ActionFunctionArgs, Form, useNavigate} from 'react-router-dom'
 import { Product } from "../types"
 import { formatCurrency } from "../utils"
 
 
 type ProductDetailsProps = {
     product: Product
+}
+
+export async function action({ }: ActionFunctionArgs) {
+    console.log('desde action de product details')
+    
+    return null
 }
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
@@ -32,6 +38,16 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                         className='bg-indigo-600 text-white rounded-lg w-full p-2 uppercase font-bold text-xs text-center'
                     >Editar</button>
                 </div>
+
+                <Form
+                    className='w-full'
+                >
+                    <input
+                        type='submit'
+                        value='Eliminar'
+                        className='bg-red-600 text-white rounded-lg w-full p-2 uppercase font-bold text-xs text-center'
+                    />
+                </Form>
             </td>
         </tr>
     )

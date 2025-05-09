@@ -9,7 +9,6 @@ type ProductData = {
 
 export async function addProduct(data: ProductData) {
 
-
     try {
 
         const parsedData = safeParse(DraftProductSchema, {
@@ -42,7 +41,7 @@ export async function getProducts() {
         const url = `${import.meta.env.VITE_API_URL}/api/products`
         const { data } = await axios.get(url)
         const result = safeParse(ProductsSchema, data.data)
-        console.log(data)
+        //console.log(data)
         if (result.success) {
             return result.output
         } else {
