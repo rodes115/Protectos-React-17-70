@@ -41,6 +41,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
                 <Form
                     className='w-full'
+                    method='POST'
                 >
                     <input
                         type='submit'
