@@ -96,7 +96,7 @@ export async function deletePrduct(id: Product['id']){
     try {
         
         const url = `${import.meta.env.VITE_API_URL}/api/products/${id}`
-        const {data} = await axios.delete(url)
+        await axios.delete(url)
 
     } catch (error) {
         console.log(error)
