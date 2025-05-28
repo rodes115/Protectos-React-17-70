@@ -8,6 +8,7 @@ export class AuthController {
         
         try{
             
+            
             const {password,email} = req.body
             const userExists = await User.findOne({email})
             if(userExists){
