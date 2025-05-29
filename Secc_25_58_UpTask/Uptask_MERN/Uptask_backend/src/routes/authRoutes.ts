@@ -2,6 +2,7 @@ import {Router} from 'express'
 import {body} from 'express-validator'
 import { AuthController } from '../controllers/AuthController'
 import { handleInputErrors } from '../middleware/validation'
+import { ContextHandlerImpl } from 'express-validator/lib/chain'
 
 const router = Router()
 
@@ -23,6 +24,14 @@ router.post('/create-account',
         .isEmail().withMessage('El email no es valido'),
         handleInputErrors,
     AuthController.createAccount
+)
+
+router.post('/confirm-account',
+
+    body('token').notEmpty().withMessage('El token no puede ir vacio'),
+    handleInputErrors,
+    AuthController.confirmAccount
+
 )
 
 export default router
