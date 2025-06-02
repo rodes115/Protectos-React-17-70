@@ -18,7 +18,6 @@ export default function AuthLayout() {
                 pauseOnHover={false}
                 pauseOnFocusLoss={false}
             />
-
         </>
     )
 }

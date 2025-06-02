@@ -34,13 +34,20 @@ router.post('/confirm-account',
 
 )
 
-router.get('/login',
+router.post('/login',
     body('email')
         .isEmail().withMessage('El E-mail no es valido'),
     body('password')
         .notEmpty().withMessage('El password no puede ir vacio'),
     handleInputErrors,
     AuthController.login
+)
+
+router.post('/request-code',
+    body('email')
+        .isEmail().withMessage('El E-mail no es valido'),
+    handleInputErrors,
+    AuthController.requestConfirmationCode
 )
 
 export default router
