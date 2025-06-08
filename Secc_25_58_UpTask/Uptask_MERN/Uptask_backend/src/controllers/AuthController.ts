@@ -4,6 +4,7 @@ import { checkPassword, hashPassword } from "../utils/auth"
 import Token from "../models/Token"
 import { generateToken } from "../utils/token"
 import { AuthEmail } from "../emails/AuthEmail"
+import { generatejJWT } from "../utils/jwt"
 
 
 export class AuthController {
@@ -50,7 +51,7 @@ export class AuthController {
         try {
             const { token } = req.body
             const tokenExist = await Token.findOne({ token })
-            console.log(tokenExist)
+
             if (!tokenExist) {
                 const error = new Error('Token no válido')
                 res.status(404).json({ error: error.message })
@@ -101,10 +102,13 @@ export class AuthController {
                 const error = new Error('password Incorrecto')
                 res.status(401).json({ error: error.message })
             }
-            
-            res.send('Autenticado...')
+            //Autenticar usuario
+            const token = generatejJWT({id: user.id})
+
+            res.send(token)
 
         } catch (error) {
+            console.log(error)
             res.status(500).json({ error: 'Hubo un error' })
         }
     }
@@ -123,7 +127,7 @@ export class AuthController {
             } else {
 
                 if (user.confirmed) {
-                    
+
                     const error = new Error('El Usuario ya esta registrado')
                     res.status(403).json({ error: error.message })
 
@@ -153,4 +157,81 @@ export class AuthController {
 
     }
 
+    static forgotPassword = async (req: Request, res: Response) => {
+
+        try {
+
+            const { email } = req.body
+
+            const user = await User.findOne({ email })
+
+            if (!user) {
+                const error = new Error('El Usuario no esta registrado')
+                res.status(404).json({ error: error.message })
+            } else {
+
+                //generar Token
+                const token = new Token()
+                token.token = generateToken()
+                token.user = user.id
+                //guardar el token
+                token.save()
+                //Envar Email
+                AuthEmail.sendPasswordResetEmail({
+                    email: user.email,
+                    name: user.name,
+                    token: token.token
+                })
+
+
+
+                res.send('Revisa tu email para instrucciones')
+
+            }
+        } catch (error) {
+            res.status(500).json({ error: 'Hubo un error' })
+        }
+
+    }
+
+    static validateToken = async (req: Request, res: Response) => {
+        try {
+            const { token } = req.body
+            const tokenExist = await Token.findOne({ token })
+            console.log(tokenExist)
+            if (!tokenExist) {
+                const error = new Error('Token no válido')
+                res.status(404).json({ error: error.message })
+            }
+
+            res.send('Token válido define tu nuevo password')
+
+        } catch (error) {
+            res.status(500).json({ error: 'Hubo un error' })
+        }
+    }
+
+    static updatePasswordWithToken = async (req: Request, res: Response) => {
+        try {
+            const { token } = req.params
+            const { password } = req.body
+            const tokenExist = await Token.findOne({ token })
+
+            if (!tokenExist) {
+                const error = new Error('Token no válido')
+                res.status(404).json({ error: error.message })
+            } else {
+
+                const user = await User.findById(tokenExist.user)
+                user.password = await hashPassword(password)
+
+                await Promise.allSettled([user.save(), tokenExist.deleteOne()])
+
+                res.send('El Passwor se modifico correctamente')
+            }
+
+        } catch (error) {
+            res.status(500).json({ error: 'Hubo un error' })
+        }
+    }
 }
