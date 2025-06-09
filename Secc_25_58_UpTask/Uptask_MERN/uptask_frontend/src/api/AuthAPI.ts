@@ -18,7 +18,6 @@ export async function createAccount(formData: UserRegistrationForm){
 
 export async function confirmAccount(token: ConfirmToken){
     try {
-        
         const url = '/auth/confirm-account'
         const {data} = await api.post<string>(url,token)
         return data

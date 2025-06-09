@@ -9,8 +9,11 @@ import { authenticate } from '../middleware/auth'
 
 const router = Router()
 
+// Middleware to authenticate the user
+// This will ensure that all routes in this router require authentication
+router.use(authenticate)
+
 router.post('/',
-    authenticate,
     body('projectName').
         notEmpty().withMessage('El Nombre del Proyecto es Obligatorio'),
     body('clientName').

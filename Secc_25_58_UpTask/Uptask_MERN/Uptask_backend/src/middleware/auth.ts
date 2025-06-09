@@ -33,6 +33,5 @@ export const authenticate = async(req: Request, res: Response, next: NextFunctio
         res.status(500).json({error: 'Token no valido'})
     }
 
-
     next()
 }
